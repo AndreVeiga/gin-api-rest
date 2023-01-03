@@ -10,17 +10,24 @@ import (
 )
 
 func ExibeTodosAlunos(c *gin.Context) {
-	c.JSON(200, models.ListaTodosAlunos())
+	var alunos []models.Aluno
+	bancoDados.DB.Find(&alunos)
+	c.JSON(200, alunos)
 }
 
-func Saudacao(c *gin.Context) {
-	nome := c.Params.ByName("nome")
+func BuscaPeloId(c *gin.Context) {
+	var result models.Aluno
+	id := c.Params.ByName("id")
+	bancoDados.DB.First(&result, id)
 
-	message := "Olá, tudo bem " + nome
+	if result.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"Not found": "Aluno não encontrado",
+		})
+		return
+	}
 
-	c.JSON(200, gin.H{
-		"message": message,
-	})
+	c.JSON(200, result)
 }
 
 func CriaNovoAluno(c *gin.Context) {
@@ -37,4 +44,3 @@ func CriaNovoAluno(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, aluno)
 }
-

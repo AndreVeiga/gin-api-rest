@@ -8,6 +8,6 @@ import (
 
 func HandleRequest(e *gin.Engine) {
 	e.GET("/alunos", controllers.ExibeTodosAlunos)
-	e.GET("/:nome", controllers.Saudacao)
+	e.GET("/alunos/:id", controllers.BuscaPeloId)
 	e.POST("/alunos", controllers.CriaNovoAluno)
 }
