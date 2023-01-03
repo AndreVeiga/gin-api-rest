@@ -4,18 +4,30 @@ go 1.19
 
 replace routes => ./routes
 
+replace models => ./models
+
+replace bancoDados => ./bancoDados
+
 replace controllers => ./controllers
 
-replace models => ./models
+require (
+	bancoDados v0.0.0-00010101000000-000000000000
+	github.com/gin-gonic/gin v1.8.2
+	routes v0.0.0-00010101000000-000000000000
+)
 
 require (
 	controllers v0.0.0-00010101000000-000000000000 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-gonic/gin v1.8.2 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.11.1 // indirect
 	github.com/goccy/go-json v0.10.0 // indirect
+	github.com/jackc/pgpassfile v1.0.0 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
+	github.com/jackc/pgx/v5 v5.2.0 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
@@ -29,6 +41,7 @@ require (
 	golang.org/x/text v0.5.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+	gorm.io/driver/postgres v1.4.6 // indirect
+	gorm.io/gorm v1.24.3 // indirect
 	models v0.0.0-00010101000000-000000000000 // indirect
-	routes v0.0.0-00010101000000-000000000000 // indirect
 )

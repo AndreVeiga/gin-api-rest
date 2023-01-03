@@ -2,6 +2,9 @@ package controllers
 
 import (
 	"models"
+	"net/http"
+
+	"bancoDados"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,3 +22,19 @@ func Saudacao(c *gin.Context) {
 		"message": message,
 	})
 }
+
+func CriaNovoAluno(c *gin.Context) {
+	var aluno models.Aluno
+
+	if err := c.ShouldBindJSON(&aluno); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	bancoDados.DB.Create(&aluno)
+
+	c.JSON(http.StatusCreated, aluno)
+}
+
