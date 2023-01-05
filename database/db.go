@@ -1,8 +1,9 @@
-package bancoDados
+package database
 
 import (
 	"log"
-	"models"
+
+	"github.com/AndreVeiga/gin-api-rest/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
