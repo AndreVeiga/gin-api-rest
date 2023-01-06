@@ -12,6 +12,8 @@ func main() {
 
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*")
+	r.Static("/assets", "./assets")
+
 	routes.HandleRequest(r)
 
 	r.Run()

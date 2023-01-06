@@ -14,4 +14,5 @@ func HandleRequest(e *gin.Engine) {
 	e.DELETE("/alunos/:id", controllers.DeletaAluno)
 	e.PATCH("/alunos/:id", controllers.EditarAluno)
 	e.GET("/", controllers.ExibePaginaIndex)
+	e.NoRoute(controllers.PaginaNaoEncontrada)
 }
