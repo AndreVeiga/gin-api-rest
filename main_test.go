@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 
 	"github.com/AndreVeiga/gin-api-rest/controllers"
@@ -16,15 +19,18 @@ import (
 var ID int
 
 const CPF = "12345678910"
+const NOME = "Nome Aluno Test"
+const RG = "123456789"
 
 func criaAlunoMock() {
 	aluno := models.Aluno{
-		Nome: "Nome Aluno Test",
+		Nome: NOME,
 		CPF:  CPF,
-		RG:   "123456789",
+		RG:   RG,
 	}
 
 	database.DB.Create(&aluno)
+
 	ID = int(aluno.ID)
 }
 
@@ -82,7 +88,71 @@ func TestBuscaPorCPF(t *testing.T) {
 	res := httptest.NewRecorder()
 	r.ServeHTTP(res, req)
 
-	// repostaBody, _ := ioutil.ReadAll(res.Body)
+	var aluno models.Aluno
+	json.Unmarshal(res.Body.Bytes(), &aluno)
 
 	assert.Equal(t, http.StatusOK, res.Code)
+	assert.Equal(t, NOME, aluno.Nome)
+	assert.Equal(t, CPF, aluno.CPF)
+	assert.Equal(t, RG, aluno.RG)
+}
+
+func TestBuscaPorId(t *testing.T) {
+	database.ConectaComBancoDeDados()
+	criaAlunoMock()
+	endpoint := "/alunos/" + strconv.Itoa(ID)
+	defer deletaAlunoMock()
+	r := SetupRotasTest()
+	r.GET("/alunos/:id", controllers.BuscaPeloId)
+
+	req, _ := http.NewRequest("GET", endpoint, nil)
+	res := httptest.NewRecorder()
+	r.ServeHTTP(res, req)
+
+	var aluno models.Aluno
+	json.Unmarshal(res.Body.Bytes(), &aluno)
+
+	assert.Equal(t, http.StatusOK, res.Code)
+
+	assert.Equal(t, NOME, aluno.Nome)
+	assert.Equal(t, CPF, aluno.CPF)
+	assert.Equal(t, RG, aluno.RG)
+}
+
+func TestDeletaAluno(t *testing.T) {
+	database.ConectaComBancoDeDados()
+	criaAlunoMock()
+	endpoint := "/alunos/" + strconv.Itoa(ID)
+	r := SetupRotasTest()
+	r.DELETE("/alunos/:id", controllers.DeletaAluno)
+
+	req, _ := http.NewRequest("DELETE", endpoint, nil)
+	res := httptest.NewRecorder()
+	r.ServeHTTP(res, req)
+
+	assert.Equal(t, http.StatusNoContent, res.Code)
+}
+
+func TestEditaAluno(t *testing.T) {
+	database.ConectaComBancoDeDados()
+	criaAlunoMock()
+	defer deletaAlunoMock()
+	r := SetupRotasTest()
+	r.PATCH("/alunos/:id", controllers.EditarAluno)
+	nome := "Novo nome pro aluno"
+	aluno := models.Aluno{Nome: nome, CPF: CPF, RG: RG}
+	var endpoint = "/alunos/" + strconv.Itoa(ID)
+
+	alunoJSON, _ := json.Marshal(aluno)
+
+	req, _ := http.NewRequest("PATCH", endpoint, bytes.NewBuffer(alunoJSON))
+	res := httptest.NewRecorder()
+	r.ServeHTTP(res, req)
+
+	var alunoAtualizado models.Aluno
+	json.Unmarshal(res.Body.Bytes(), &alunoAtualizado)
+
+	assert.Equal(t, http.StatusOK, res.Code)
+
+	assert.Equal(t, nome, alunoAtualizado.Nome)
 }
