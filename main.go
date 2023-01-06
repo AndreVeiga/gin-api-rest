@@ -11,6 +11,7 @@ func main() {
 	database.ConectaComBancoDeDados()
 
 	r := gin.Default()
+	r.LoadHTMLGlob("templates/*")
 	routes.HandleRequest(r)
 
 	r.Run()
